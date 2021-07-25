@@ -7,7 +7,7 @@ void setup() {
   Serial.begin(9600);
   pinMode(12, OUTPUT);
   pinMode(3, INPUT);
-  attachInterrupt(0, keskeytys, RISING);
+  attachInterrupt(0, keskeytys, CHANGE);
   delay(25);
 
 }
@@ -32,6 +32,6 @@ void keskeytys() {
         digitalWrite(12,HIGH);
       }
       Serial.println(String("Laskuri: ") + maara);
-      delay(250);
+      delay(500);
     }
   }
