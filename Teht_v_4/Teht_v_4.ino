@@ -1,15 +1,20 @@
 #include <EEPROM.h>
-#define AIKA 5000
+#define AIKA 5000  //Määritellään aika
 
-int lampotilaAnturi = A0;
+/*
+Määritellään kytkennät
+*/
+
+int lampotilaAnturi = A0;  
 int tulostusNappi = 3;
 int tyhjennysNappi = 2;
 int ajastin;
 int muisti = 0;
 
-volatile boolean tyhjennys = false;
-volatile boolean tulostus = false;
 
+/*
+Määritellään setup ja myös keskeytykset
+*/
 void setup() {
   Serial.begin(115200);
   pinMode(tulostusNappi, INPUT);
@@ -20,7 +25,9 @@ void setup() {
   attachInterrupt(digitalPinToInterrupt(tulostusNappi), tulosta, CHANGE);
 
 }
-
+/*
+Mitataan lämpötilaa viiden sekunnin välein kutsumalla tulostaLampotila() aliohjelmaa
+*/
 void loop() {
  if (millis() - ajastin > AIKA) 
   {
@@ -29,6 +36,10 @@ void loop() {
   }
 }
 
+
+/*
+Mitataan lämpötila ja kirjoitetaan se muistiin
+*/
 void tulostaLampotila()
 {
   byte arvo = analogRead(lampotilaAnturi);     
@@ -42,7 +53,9 @@ void tulostaLampotila()
   }
   
 }
-
+/*
+Aliohjelma EEPROM muistin tyhjentämiseksi
+*/
 void tyhja(){
   for (int i = 0 ; i < EEPROM.length() ; i++) {
     if (EEPROM.read(i) != 0)                    
@@ -55,7 +68,9 @@ void tyhja(){
       Serial.println("EEPROM on tyhjä");
     }
  
-
+/*
+Aliohjelma mittaustulosten kirjoittamiseksi sarjaporttiin.
+*/
 void tulosta(){
       for (int i = 0 ; i < EEPROM.length() ; i++) {
     byte arvo = EEPROM.read(i);                
