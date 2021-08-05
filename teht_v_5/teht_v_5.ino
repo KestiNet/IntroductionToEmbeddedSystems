@@ -1,39 +1,38 @@
+//Määritellään pinnit ja muuttuja
+
 #include <LiquidCrystal.h>
-LiquidCrystal lcd(12,11,5,4,7,1);
-const int switchPin = 6; 
-int switchState = 0; 
-int prevSwitchState = 0; 
-int reply;
+LiquidCrystal lcd(12,11,5,4,7,1);  
+const int tilttiSensori = 6;      
+int tilttiTila = 0;              
+int edellinenTilttiTila = 0; 
+int vastaus;
 float lampotila;
 int tmp = A1;
 
 
-//volatile boolean buttonState = false;
 
+//Määritellään setup tiedot ja pyydetään käyttäjää kysymään kristallipallolta
 void setup(){ 
-    pinMode(3, INPUT);
-  pinMode(switchPin, INPUT);
-    lcd.begin(16, 2); 
+  pinMode(3, INPUT);
+  pinMode(tilttiSensori, INPUT);
+  lcd.begin(16, 2); 
   lcd.print("Kysy "); 
   lcd.setCursor(0, 1); 
   lcd.print("Kristallipallolta");
     attachInterrupt(digitalPinToInterrupt(3), keskeytys, CHANGE);
-
-
-
-
 }
+//Määritellään satunnainen vastaus käyttäjän kysymyksiin
 void loop(){ 
-switchState = digitalRead(switchPin);
-  if(switchState != prevSwitchState){ 
-    if(switchState == LOW){ 
-      reply = random(8); 
-                lcd.clear(); 
+tilttiTila = digitalRead(tilttiSensori);
+  if(tilttiTila != edellinenTilttiTila){ 
+    if(tilttiTila == LOW){ 
+      vastaus = random(8); 
+      lcd.clear(); 
       lcd.setCursor(0, 0); 
       lcd.print("Vastaus on: "); 
       lcd.setCursor(0,1 );
 
-      switch(reply){ 
+      switch(vastaus){ 
         case 0: lcd.print("Kyllä");
         break; 
         case 1: lcd.print("Todennäköisesti"); 
@@ -53,8 +52,10 @@ switchState = digitalRead(switchPin);
       } 
     } 
   } 
-  prevSwitchState = switchState; 
+  edellinenTilttiTila = tilttiTila; 
 } 
+
+//Keskeytys jossa pyritään muuttamaan acd arvo celsiukseksi.
 void keskeytys(){
     lcd.clear();
     int lukema = analogRead(tmp);
@@ -62,7 +63,7 @@ void keskeytys(){
     lampotila /= 1024.0;
     float tlampo = (lampotila -0.5)*100;
     lcd.setCursor(0,1);
-  lcd.print("Tmp:"); 
+    lcd.print("Tmp:"); 
     lcd.print(tlampo);
     }
 
