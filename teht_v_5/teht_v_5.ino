@@ -1,22 +1,29 @@
 #include <LiquidCrystal.h>
-LiquidCrystal lcd(12,11,5,4,3,1);
+LiquidCrystal lcd(12,11,5,4,7,1);
 const int switchPin = 6; 
 int switchState = 0; 
 int prevSwitchState = 0; 
 int reply;
-int lampotilaAnturi = A0;
-int lampoNappi = 2;
+float lampotila;
+int tmp = A1;
+
+
+//volatile boolean buttonState = false;
+
 void setup(){ 
+    pinMode(3, INPUT);
   pinMode(switchPin, INPUT);
     lcd.begin(16, 2); 
   lcd.print("Kysy "); 
   lcd.setCursor(0, 1); 
-  lcd.print("Kristallipallolta"); 
-    attachInterrupt(digitalPinToInterrupt(lampoNappi), keskeytys, CHANGE);
+  lcd.print("Kristallipallolta");
+    attachInterrupt(digitalPinToInterrupt(3), keskeytys, CHANGE);
+
+
+
 
 }
 void loop(){ 
-  
 switchState = digitalRead(switchPin);
   if(switchState != prevSwitchState){ 
     if(switchState == LOW){ 
@@ -48,10 +55,15 @@ switchState = digitalRead(switchPin);
   } 
   prevSwitchState = switchState; 
 } 
-
 void keskeytys(){
-   byte lampo = analogRead(lampotilaAnturi);
-  float lampotila = lampo * (5.0 / 1024.0);          
-      lampotila = (lampotila - 0.5) * 100;
-  lcd.print(lampotila);
-}
+    lcd.clear();
+    int lukema = analogRead(tmp);
+    lampotila = lukema * 5.0;
+    lampotila /= 1024.0;
+    float tlampo = (lampotila -0.5)*100;
+    lcd.setCursor(0,1);
+  lcd.print("Tmp:"); 
+    lcd.print(tlampo);
+    }
+
+  
